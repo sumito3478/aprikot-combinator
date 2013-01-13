@@ -11,7 +11,7 @@ object AprikotCombinatorBuild extends Build {
   ).settings(StandardProject.newSettings :_*
   ).settings(
     Seq(
-      version := "0.0.2-SNAPSHOT"
+      version := "0.0.2"
     ): _*
   )
 
