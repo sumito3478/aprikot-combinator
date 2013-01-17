@@ -17,7 +17,7 @@
 package info.sumito3478.aprikot.combinator
 
 /**
- * An implementation of z-combinator.
+ * An implementation of z-combinator - Z(a) == {x => a(Z(a))(x)}.
  *
  * It generates a function with anonymous recursion.
  *
@@ -39,5 +39,5 @@ package info.sumito3478.aprikot.combinator
  * }}}
  */
 object Z {
-  def apply[A, B](f: (A => B) => (A => B)): A => B = (x: A) => f(Z(f))(x)
+  def apply[X, R](a: (X => R) => (X => R)): X => R = (x: X) => a(Z(a))(x)
 }
