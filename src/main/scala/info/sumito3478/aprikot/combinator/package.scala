@@ -18,70 +18,98 @@ package info.sumito3478.aprikot
 
 package object combinator {
   /**
-   * Pimp-my-library class to add |> operator.
-   *
-   * |> operator passes the result of the left side to the function on the right
-   * side (forward pipe operator).
-   *
-   * Example usage:
-   * {{{
-   * import info.sumito3478.aprikot.control.ForwardPipeOperator
-   *
-   * val i = -1 |> math.abs
-   * // i == 1
-   *
-   * def function1(x: Int) = x + 1
-   *
-   * def function2(x : Int) = x * 2
-   *
-   * val result = 100 |> function1 |> function2
-   * // result == 202
-   * }}}
+   * An implicit value class to add combinator methods to [[scala.Any]].
    */
-  implicit class ForwardPipeOperator[A](underlined: A) {
-    def |>[R](f: A => R): R = {
-      f(underlined)
-    }
+  implicit class AnyW[A](val a: A) extends AnyVal {
+    /**
+     * T-Combinator operator: `a |>| b == b(a)`.
+     *
+     * This operator should pass the result of the left side to the function on
+     * the right side (forward pipeline operator).
+     *
+     * Example Usage:
+     * {{{
+     * import info.sumito3478.aprikot.combinator.{|>|, |<|}
+     * val abs = math.abs _
+     * val
+     * val ret = -1 |>| abs |>|
+     * // ret == max(min(1, 2), 0)
+     * }}}
+     *
+     * @note This operator corresponds to the `|>` operator in F#.
+     */
+    def |>|[B](b: A => B): B = b(a)
+
+    /**
+     * T-Combinator operator for Function2: `a |>| b == b(a, _)`.
+     *
+     * This operator should pass the result of the left side to the function on
+     * the right side (forward pipeline operator).
+     *
+     * Example Usage:
+     * {{{
+     * import info.sumito3478.aprikot.combinator.{|>|, |<|}
+     * val min = math.min _
+     * val ret = 1 |>| min |<| 2 |>| max |<| 0
+     * // ret == max(min(1, 2), 0)
+     * }}}
+     *
+     * @note This operator corresponds to the `|>` operator in F#.
+     */
+    def |>|[B, X](b: (A, X) => B): X => B = b(a, _)
   }
 
   /**
-   * Pimp-my-library class to add ||> operator.
-   *
-   * ||> operator passes the tuple of two arguments on the left side to the
-   * function on the right side.
-   *
-   * Example usage:
-   * {{{
-   * import info.sumito3478.aprikot.control.ForwardPipeOperatorOfTuple2
-   *
-   * val i = (2.0, 2.0) ||> math.pow
-   * // i == 4.0
-   * }}}
+   * An implicit value class to add combinator methods to [[scala.Function1]].
    */
-  implicit class ForwardPipeOperatorOfTuple2[A, B](underlined: (A, B)) {
-    def ||>[R](f: (A, B) => R): R = {
-      f(underlined._1, underlined._2)
-    }
+  implicit class Function1W[A, B](val a: B => A) extends AnyVal {
+    /**
+     * I*-Combinator operator: `a |<| b == a(b)`.
+     *
+     * This operator should pass the result of the right side to the function
+     * on the left side (backward pipeline operator).
+     *
+     * Example Usage:
+     * {{{
+     * import info.sumito3478.aprikot.combinator.{|>|, |<|}
+     * val min = math.min _
+     * val ret = 1 |>| min |<| 2 |>| max |<| 0
+     * // ret == max(min(1, 2), 0)
+     * }}}
+     *
+     * @note This operator corresponds to the `<|` operator in F#.
+     */
+    def |<|(b: B): A = a(b)
+
+    /**
+     * S-Combinator operator: `a |*| c == b => c(b, a(b))`.
+     *
+     * Example Usage:
+     * {{{
+     * val cos = math.cos _
+     * val max = math.max(_: Double, _: Double)
+     * val cosSmax = cos |*| max // Returns the max of x and cos(x)!
+     * // cosSmax(0.3) === max(0.3, cos(0.3))
+     * }}}
+     */
+    def |*|[C](c: (B, A) => C): B => C = b => c(b, a(b))
   }
 
   /**
-   * Pimp-my-library class to add |||> operator.
-   *
-   * ||> operator passes the tuple of three arguments on the left side to the
-   * function on the right side.
-   *
-   * Example usage:
-   * {{{
-   * import info.sumito3478.aprikot.control.ForwardPipeOperatorOfTuple3
-   *
-   * def max(x: Int, y: Int, z: Int): Int = math.max(x, math.max(y, z))
-   * val i = (3, 1, 2) |||> max
-   * // i == 3
-   * }}}
+   * An implicit value class to add combinator methods to [[scala.Function1]].
    */
-  implicit class ForwardPipeOperatorOfTuple3[A, B, C](underlined: (A, B, C)) {
-    def |||>[R](f: (A, B, C) => R): R = {
-      f(underlined._1, underlined._2, underlined._3)
-    }
+  implicit class Function2W[A, B, C](val a: (C, B) => A) extends AnyVal {
+    /**
+     * S-Combinator operator: `a |*| b == c => a(c, b(c))`.
+     *
+     * Example Usage:
+     * {{{
+     * val cos = math.cos _
+     * val max = math.max(_: Double, _: Double)
+     * val cosSmax = max |*| cos // Returns the max of x and cos(x)!
+     * // cosSmax(0.3) === max(0.3, cos(0.3))
+     * }}}
+     */
+    def |*|(b: C => B): C => A = c => a(c, b(c))
   }
 }
