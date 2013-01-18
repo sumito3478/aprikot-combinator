@@ -69,12 +69,28 @@ package object combinator {
      * This operator should pass the result of the right side to the function
      * on the left side (backward pipeline operator).
      *
+     * Example Usage:
+     * {{{
+     * import info.sumito3478.aprikot.combinator.{|>|, |<|}
+     * val min = math.min _
+     * val ret = 1 |>| min |<| 2 |>| max |<| 0
+     * // ret == max(min(1, 2), 0)
+     * }}}
+     *
      * @note This operator corresponds to the `<|` operator in F#.
      */
     def |<|(b: B): A = a(b)
 
     /**
      * S-Combinator operator: `a |*| c == b => c(b, a(b))`.
+     *
+     * Example Usage:
+     * {{{
+     * val cos = math.cos _
+     * val max = math.max(_: Double, _: Double)
+     * val cosSmax = cos |*| max // Returns the max of x and cos(x)!
+     * // cosSmax(0.3) === max(0.3, cos(0.3))
+     * }}}
      */
     def |*|[C](c: (B, A) => C): B => C = b => c(b, a(b))
   }
@@ -85,6 +101,14 @@ package object combinator {
   implicit class Function2W[A, B, C](val a: (C, B) => A) extends AnyVal {
     /**
      * S-Combinator operator: `a |*| b == c => a(c, b(c))`.
+     *
+     * Example Usage:
+     * {{{
+     * val cos = math.cos _
+     * val max = math.max(_: Double, _: Double)
+     * val cosSmax = max |*| cos // Returns the max of x and cos(x)!
+     * // cosSmax(0.3) === max(0.3, cos(0.3))
+     * }}}
      */
     def |*|(b: C => B): C => A = c => a(c, b(c))
   }
