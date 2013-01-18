@@ -29,7 +29,7 @@ package object combinator {
      *
      * Example Usage:
      * {{{
-     * import info.sumito3478.aprikot.combinator.{|>, |<}
+     * import info.sumito3478.aprikot.combinator.{|>|, |<|}
      * val abs = math.abs _
      * val
      * val ret = -1 |>| abs |>|
@@ -41,14 +41,14 @@ package object combinator {
     def |>|[B](b: A => B): B = b(a)
 
     /**
-     * T-Combinator operator for Function2: `a |> b == b(a, _)`.
+     * T-Combinator operator for Function2: `a |>| b == b(a, _)`.
      *
      * This operator should pass the result of the left side to the function on
      * the right side (forward pipeline operator).
      *
      * Example Usage:
      * {{{
-     * import info.sumito3478.aprikot.combinator.{|>, |<}
+     * import info.sumito3478.aprikot.combinator.{|>|, |<|}
      * val min = math.min _
      * val ret = 1 |>| min |<| 2 |>| max |<| 0
      * // ret == max(min(1, 2), 0)

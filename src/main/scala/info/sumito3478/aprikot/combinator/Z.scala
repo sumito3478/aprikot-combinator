@@ -23,7 +23,7 @@ package info.sumito3478.aprikot.combinator
  *
  * Example Usage:
  * {{{
- * import info.sumito3478.aprikot.combinator.{|>, Z}
+ * import info.sumito3478.aprikot.combinator.{|>|, Z}
  *
  * val i = ({
  *   f: (Int => Int) =>
@@ -34,7 +34,7 @@ package info.sumito3478.aprikot.combinator
  *           case _ => f(n - 1) + f(n - 2)
  *         }
  *     }
- * } |> Z[Int, Int])(7)
+ * } |>| Z[Int, Int])(7)
  * // i == 13
  * }}}
  */
