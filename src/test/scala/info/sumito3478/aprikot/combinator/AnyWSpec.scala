@@ -19,25 +19,32 @@ package info.sumito3478.aprikot.combinator
 import org.scalatest
 import scalatest.FunSpec
 
-class PipeOperatorSpec extends FunSpec {
-  describe("|>") {
+class AnyWSpec extends FunSpec {
+  describe("|>|") {
     it("""should pass the result of the left side to the function on the right
         |  side""".stripMargin) {
-      val i = -1 |> math.abs
+      val abs = math.abs _
+      val i = -1 |>| abs
       assert(i === 1)
     }
 
-    it("support pipelining with multiple functions") {
-      def function1(x: Int) = x + 1
-
-      def function2(x: Int) = x * 2
-
-      val result = 100 |> function1 |> function2
-
-      assert(result === 202)
+    it("should support pipelining with multiple functions") {
+      val sin = math.sin _
+      val cos = math.cos _
+      val ret = 0.5 |>| sin |>| cos
+      assert(ret === cos(sin(0.5)))
     }
   }
-
+  describe("`|>|` and `|<|`") {
+    it("should be able to be composed") {
+      val min = math.min _
+      val max = math.max _
+      val operatorRet = 1 |>| min |<| 4 |>| max |<| 6 |>| min |<| 7
+      val funcCallRet = min(max(min(1, 4), 6), 7)
+      assert(operatorRet === funcCallRet)
+    }
+  }
+  /*
   describe("||>") {
     it("""should pass the tuple of two arguments on the left side to the
         |  function on the right side""".stripMargin) {
@@ -54,5 +61,5 @@ class PipeOperatorSpec extends FunSpec {
       val i = (3, 1, 2) |||> max
       assert(i === 3)
     }
-  }
+  }*/
 }

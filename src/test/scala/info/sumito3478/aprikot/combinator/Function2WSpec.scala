@@ -19,20 +19,13 @@ package info.sumito3478.aprikot.combinator
 import org.scalatest
 import scalatest.FunSpec
 
-class ZSpec extends FunSpec {
-  describe("Z") {
-    it("""should generate a function with anonymous recursion""".stripMargin) {
-      val fib = {
-        f: (Int => Int) =>
-          {
-            n: Int =>
-              n match {
-                case m if m < 2 => m
-                case _ => f(n - 1) + f(n - 2)
-              }
-          }
-      } |>| Z[Int, Int] _
-      assert(fib(7) === 13)
+class Function2WSpec extends FunSpec {
+  describe("|*|") {
+    it("S-combinates the functions") {
+      val cos = math.cos _
+      val max = math.max(_: Double, _: Double)
+      val cosSmax = max |*| cos // Returns the max of x and cos(x)!
+      assert(cosSmax(0.3) === max(0.3, cos(0.3)))
     }
   }
 }
